@@ -9,7 +9,7 @@ class Transport(str, Enum):
     streamable_http = "streamable-http"
 
 
-app = typer.Typer(name="MCP Docs Demo CLI", help="CLI for MCP Docs Demo", no_args_is_help=True)
+app = typer.Typer(name="MCP Code snippets", help="CLI for MCP code snippest")
 
 
 @app.command(name="run")
