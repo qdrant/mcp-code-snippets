@@ -77,4 +77,8 @@ In order to build the package just run:
 uv build
 ```
 
-Try running 
+After building, try running the package with:
+
+```bash
+mcp-code-snippets --help
+```
