@@ -6,7 +6,7 @@ class JavaDependencyParser(DependencyParserBase):
     @classmethod
     def language(cls) -> ProgrammingLanguage:
         return ProgrammingLanguage.JAVA
-    
+
     @classmethod
     def parse_dependencies(cls, _project_root: str) -> dict[str, str | None]:
         """

@@ -15,7 +15,9 @@ from mcp_code_snippets.settings import ProxySettings
 proxy_settings = ProxySettings()
 remote_server_config = read_mcp_config(proxy_settings.mcp_proxy_config_path)
 
-mcp = QdrantFastMCPProxy(proxy_settings=proxy_settings, remote_server_config=remote_server_config)
+mcp = QdrantFastMCPProxy(
+    proxy_settings=proxy_settings, remote_server_config=remote_server_config
+)
 
 
 LOOKUP_TOOL_DESCRIPTION = """
@@ -25,18 +27,25 @@ Lookup available methods, features and possible configurations.
 Example: Create a collection for hybrid search with qdrant client.
 """
 
+
 @mcp.tool(
     name="lookup-snippet",
     description=LOOKUP_TOOL_DESCRIPTION,
 )
 async def lookup_snippet(
-    query: Annotated[str, Field(description="Description of the function or method to lookup a snippet for.")]
+    query: Annotated[
+        str,
+        Field(
+            description="Description of the function or method to lookup a snippet for."
+        ),
+    ],
 ) -> list[TextContent | ImageContent | EmbeddedResource]:
-        
     # Detect parameter values for the remote MCP tool here
-    language = proxy_settings.language or detect_language(proxy_settings.project_root_path)
+    language = proxy_settings.language or detect_language(
+        proxy_settings.project_root_path
+    )
     packages = get_dependencies(language, proxy_settings.project_root_path)
-    
+
     # Auto-fill some arguments for the remote MCP tool here
     arguments = {
         "query": query,

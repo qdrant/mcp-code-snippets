@@ -22,3 +22,8 @@ mcp-code-snippets = "mcp_code_snippets.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["mcp_code_snippets"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.13",
+]

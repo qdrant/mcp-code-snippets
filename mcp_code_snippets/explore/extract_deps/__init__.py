@@ -1,5 +1,3 @@
-
-
 from typing import Optional
 from mcp_code_snippets.explore.detect_language import ProgrammingLanguage
 from mcp_code_snippets.explore.extract_deps.base import DependencyParserBase
@@ -23,29 +21,27 @@ DEPENDENCY_PARSERS = {
 
 # This is a fallback for the case when the language is not detected or
 # if it was not possible to extract the dependencies.
-DEFAULT_DEPENDENCIES = {
-    "qdrant-client": None
-}
+DEFAULT_DEPENDENCIES = {"qdrant-client": None}
 
 
-def get_dependencies(language: Optional[ProgrammingLanguage], project_root: str) -> dict[str, str | None]:
+def get_dependencies(
+    language: Optional[ProgrammingLanguage], project_root: str
+) -> dict[str, str | None]:
     """
     Get the dependencies for a given language.
     """
 
     if language is None:
         return DEFAULT_DEPENDENCIES
-    
+
     language_parser = DEPENDENCY_PARSERS.get(language)
 
-    if language_parser is None: 
+    if language_parser is None:
         return DEFAULT_DEPENDENCIES
-    
+
     dependencies = language_parser.parse_dependencies(project_root)
 
     if dependencies is None or len(dependencies) == 0:
         return DEFAULT_DEPENDENCIES
-    
+
     return dependencies
-
-

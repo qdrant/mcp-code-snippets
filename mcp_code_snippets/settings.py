@@ -12,7 +12,7 @@ def get_default_mcp_config() -> MCPConfig:
         mcpServers={
             "mcp-server-qdrant": {
                 "url": "https://mcp.qdrant.tech/mcp/",
-                "transport": "streamable-http"
+                "transport": "streamable-http",
             }
         }
     )
@@ -24,13 +24,13 @@ class ProxySettings(BaseSettings):
     project_root_path: str = Field(
         default="./",
         validation_alias="PROJECT_ROOT_PATH",
-        description="The root path of the project. If not provided, the current working directory will be used."
+        description="The root path of the project. If not provided, the current working directory will be used.",
     )
 
     language: Optional[ProgrammingLanguage] = Field(
         default=None,
         validation_alias="PROGRAMMING_LANGUAGE",
-        description="The programming language of the project. If not provided, the language will be detected automatically."
+        description="The programming language of the project. If not provided, the language will be detected automatically.",
     )
 
     mcp_proxy_config_path: Optional[str] = Field(

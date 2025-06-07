@@ -12,10 +12,12 @@ class QdrantFastMCPProxy(FastMCPProxy):
     This class can be extended to add more Qdrant-specific functionality if needed.
     """
 
-    def __init__(self, proxy_settings: ProxySettings, remote_server_config: MCPConfig, **kwargs):
+    def __init__(
+        self, proxy_settings: ProxySettings, remote_server_config: MCPConfig, **kwargs
+    ):
         self._remote_server_config = remote_server_config
         self._proxy_settings = proxy_settings
-        
+
         client = Client(remote_server_config)
         super().__init__(client, **kwargs)
 

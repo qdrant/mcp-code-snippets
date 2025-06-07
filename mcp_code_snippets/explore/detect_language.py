@@ -11,6 +11,7 @@ from typing import Optional
 import os
 import glob
 
+
 class ProgrammingLanguage(Enum):
     PYTHON = "python"
     JAVA = "java"
@@ -18,8 +19,8 @@ class ProgrammingLanguage(Enum):
     RUST = "rust"
     GOLANG = "golang"
     CSHARP = "csharp"
-    
-    
+
+
 def detect_python_language(project_root: str) -> Optional[ProgrammingLanguage]:
     """
     Detect if the project is a Python project by looking for common Python project files.
@@ -30,9 +31,9 @@ def detect_python_language(project_root: str) -> Optional[ProgrammingLanguage]:
         "setup.py",
         "Pipfile",
         "poetry.lock",
-        "*.py"
+        "*.py",
     ]
-    
+
     for indicator in python_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.PYTHON
@@ -51,9 +52,9 @@ def detect_java_language(project_root: str) -> Optional[ProgrammingLanguage]:
         "build.gradle",  # Gradle
         "*.java",
         "*.class",
-        "*.jar"
+        "*.jar",
     ]
-    
+
     for indicator in java_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.JAVA
@@ -61,6 +62,7 @@ def detect_java_language(project_root: str) -> Optional[ProgrammingLanguage]:
             if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
                 return ProgrammingLanguage.JAVA
     return None
+
 
 def detect_javascript_language(project_root: str) -> Optional[ProgrammingLanguage]:
     """
@@ -73,9 +75,9 @@ def detect_javascript_language(project_root: str) -> Optional[ProgrammingLanguag
         "*.js",
         "*.jsx",
         "*.ts",
-        "*.tsx"
+        "*.tsx",
     ]
-    
+
     for indicator in js_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.JAVASCRIPT
@@ -84,16 +86,13 @@ def detect_javascript_language(project_root: str) -> Optional[ProgrammingLanguag
                 return ProgrammingLanguage.JAVASCRIPT
     return None
 
+
 def detect_rust_language(project_root: str) -> Optional[ProgrammingLanguage]:
     """
     Detect if the project is a Rust project by looking for common Rust project files.
     """
-    rust_indicators = [
-        "Cargo.toml",
-        "Cargo.lock",
-        "*.rs"
-    ]
-    
+    rust_indicators = ["Cargo.toml", "Cargo.lock", "*.rs"]
+
     for indicator in rust_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.RUST
@@ -102,16 +101,13 @@ def detect_rust_language(project_root: str) -> Optional[ProgrammingLanguage]:
                 return ProgrammingLanguage.RUST
     return None
 
+
 def detect_golang_language(project_root: str) -> Optional[ProgrammingLanguage]:
     """
     Detect if the project is a Go project by looking for common Go project files.
     """
-    go_indicators = [
-        "go.mod",
-        "go.sum",
-        "*.go"
-    ]
-    
+    go_indicators = ["go.mod", "go.sum", "*.go"]
+
     for indicator in go_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.GOLANG
@@ -120,16 +116,13 @@ def detect_golang_language(project_root: str) -> Optional[ProgrammingLanguage]:
                 return ProgrammingLanguage.GOLANG
     return None
 
+
 def detect_csharp_language(project_root: str) -> Optional[ProgrammingLanguage]:
     """
     Detect if the project is a C# project by looking for common C# project files.
     """
-    csharp_indicators = [
-        "*.csproj",
-        "*.sln",
-        "*.cs"
-    ]
-    
+    csharp_indicators = ["*.csproj", "*.sln", "*.cs"]
+
     for indicator in csharp_indicators:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.CSHARP

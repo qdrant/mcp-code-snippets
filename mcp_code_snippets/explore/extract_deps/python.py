@@ -11,7 +11,6 @@ class PythonDependencyParser(DependencyParserBase):
     @classmethod
     def language(cls) -> ProgrammingLanguage:
         return ProgrammingLanguage.PYTHON
-    
 
     @classmethod
     def parse_dependencies(cls, project_root: str) -> dict[str, str | None]:
@@ -34,9 +33,10 @@ class PythonDependencyParser(DependencyParserBase):
             pyproject = tomllib.load(f)
             return cls._parse_dependencies(pyproject)
 
-
     @classmethod
-    def _parse_dependencies(cls, pyproject_content: dict[str, Any]) -> dict[str, str | None]:
+    def _parse_dependencies(
+        cls, pyproject_content: dict[str, Any]
+    ) -> dict[str, str | None]:
         """Parse dependencies from the pyproject.toml file and retrieve version via importlib.
 
         Args:
@@ -56,8 +56,8 @@ class PythonDependencyParser(DependencyParserBase):
 
     @staticmethod
     def _parse_region(content: dict[str, Any], region: str) -> list[str]:
-        if '.' in region:
-            regions = region.split('.')
+        if "." in region:
+            regions = region.split(".")
             for region in regions:
                 content = content.get(region, {})
         else:
@@ -65,14 +65,14 @@ class PythonDependencyParser(DependencyParserBase):
         dependencies = []
         if isinstance(content, list):
             for dependency in content:
-                if '<' in dependency:
-                    dependency = dependency.split('<')[0].strip()
-                elif '>' in dependency:
-                    dependency = dependency.split('>')[0].strip()
-                elif '=' in dependency:
-                    dependency = dependency.split('=')[0].strip()
-                elif '^' in dependency:
-                    dependency = dependency.split('^')[1].strip()
+                if "<" in dependency:
+                    dependency = dependency.split("<")[0].strip()
+                elif ">" in dependency:
+                    dependency = dependency.split(">")[0].strip()
+                elif "=" in dependency:
+                    dependency = dependency.split("=")[0].strip()
+                elif "^" in dependency:
+                    dependency = dependency.split("^")[1].strip()
                 dependencies.append(dependency)
         elif isinstance(content, dict):
             dependencies = list(content.keys())
@@ -89,12 +89,11 @@ class PythonDependencyParser(DependencyParserBase):
         Returns:
             list[str]: List of poetry dependencies.
         """
-        fields = [
-            "tool.poetry.dependencies",
-            "tool.poetry.dev-dependencies"
-        ]
+        fields = ["tool.poetry.dependencies", "tool.poetry.dev-dependencies"]
 
-        for group in pyproject_content.get("tool", {}).get("poetry", {}).get("group", {}):
+        for group in (
+            pyproject_content.get("tool", {}).get("poetry", {}).get("group", {})
+        ):
             fields.append(f"tool.poetry.group.{group}.dependencies")
             fields.append(f"tool.poetry.group.{group}.dev-dependencies")
 
@@ -105,7 +104,9 @@ class PythonDependencyParser(DependencyParserBase):
         return dependencies
 
     @classmethod
-    def _parse_pypa_spec_dependencies(cls, pyproject_content: dict[str, Any]) -> list[str]:
+    def _parse_pypa_spec_dependencies(
+        cls, pyproject_content: dict[str, Any]
+    ) -> list[str]:
         """
         Parse PyPA specification dependencies from the pyproject.toml file.
 
@@ -124,7 +125,9 @@ class PythonDependencyParser(DependencyParserBase):
         for field in fields:
             dependencies.extend(cls._parse_region(pyproject_content, field))
 
-        dependency_groups = pyproject_content.get("project", {}).get("dependency-groups", {})
+        dependency_groups = pyproject_content.get("project", {}).get(
+            "dependency-groups", {}
+        )
         for group, deps in dependency_groups.items():
             dependencies.extend(deps)
         return dependencies
@@ -142,11 +145,11 @@ class PythonDependencyParser(DependencyParserBase):
         """
         clean_dependencies = []
         for dependency in dependencies:
-            if dependency == 'python':
+            if dependency == "python":
                 continue
 
-            if '[' in dependency:
-                dependency = dependency.split('[')[0].strip()
+            if "[" in dependency:
+                dependency = dependency.split("[")[0].strip()
 
             clean_dependencies.append(dependency)
         return clean_dependencies
@@ -165,8 +168,9 @@ class PythonDependencyParser(DependencyParserBase):
         for dependency in dependencies:
             try:
                 version = importlib.metadata.version(dependency)
-                versioned_dependencies[dependency] = version  # todo: split version into tuple or dict
+                versioned_dependencies[dependency] = (
+                    version  # todo: split version into tuple or dict
+                )
             except importlib.metadata.PackageNotFoundError:
                 versioned_dependencies[dependency] = None
         return versioned_dependencies
-
