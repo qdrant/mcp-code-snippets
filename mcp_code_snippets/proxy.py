@@ -1,3 +1,4 @@
+from fastmcp import FastMCP
 from fastmcp.utilities.mcp_config import MCPConfig
 from fastmcp.client import Client
 from fastmcp.server.proxy import FastMCPProxy
@@ -22,6 +23,6 @@ class QdrantFastMCPProxy(FastMCPProxy):
         super().__init__(client, **kwargs)
 
     async def get_tools(self) -> dict[str, Tool]:
-        tools = await super().get_tools()
         # Local tools only
-        return tools
+        local_tools = await FastMCP.get_tools(self)
+        return local_tools

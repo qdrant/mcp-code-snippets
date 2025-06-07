@@ -1,8 +1,10 @@
 [project]
 name = "mcp-code-snippets"
 version = "0.1.0"
-authors = ["Qdrant Team <info@qdrant.tech>"]
-license = "Apache License"
+authors = [
+    {name = "Qdrant Team", email = "info@qdrant.tech"}
+]
+license = "Apache-2.0"
 description = "Intermediate MCP server for code snippets search"
 readme = "README.md"
 requires-python = ">=3.10"
