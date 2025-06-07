@@ -5,7 +5,7 @@ description = "Intermediate MCP server for code snippets search"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "mcp-server-qdrant",
+    "fastmcp>=2.7.0",
 ]
 
 [build-system]
@@ -16,8 +16,6 @@ build-backend = "hatchling.build"
 line-length = 88
 target-version = "py38"
 
-[tool.uv.sources]
-mcp-server-qdrant = { git = "https://github.com/qdrant/mcp-server-qdrant.git", branch = "filters" }
 
 [project.scripts]
 mcp-code-snippets = "mcp_code_snippets.cli:app"

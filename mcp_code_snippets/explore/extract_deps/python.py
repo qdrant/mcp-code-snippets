@@ -1,46 +1,42 @@
 import importlib.metadata
+import os
 import tomllib
 from typing import Any
 
-
-def parse_version(version: str) -> tuple[int, int, int] | None:
-    """
-    Parse a version string into a tuple of integers.
-
-    Args:
-        version (str): Version string in the format "major.minor.patch".
-
-    Returns:
-        tuple[int, int, int]: A tuple containing major, minor, and patch versions.
-    """
-
-    try:
-        parts = version.split(".")
-    except ValueError:
-        return None
-
-    return int(parts[0]), int(parts[1]), int(parts[2])
+from mcp_code_snippets.explore.detect_language import ProgrammingLanguage
+from mcp_code_snippets.explore.extract_deps.base import DependencyParserBase
 
 
-def parse_dependencies(pyproject_path: str) -> dict[str, str | None]:
-    """
-    Parse the dependencies from a pyproject.toml file.
-
-    Args:
-        pyproject_path (str): Path to the pyproject.toml file.
-
-    Returns:
-        list[str]: List of dependencies.
-    """
-
-    with open(pyproject_path, "rb") as f:
-        pyproject = tomllib.load(f)
-        return DependencyParser.parse_dependencies(pyproject)
-
-
-class DependencyParser:
+class PythonDependencyParser(DependencyParserBase):
     @classmethod
-    def parse_dependencies(cls, pyproject_content: dict[str, Any]) -> dict[str, str | None]:
+    def language(cls) -> ProgrammingLanguage:
+        return ProgrammingLanguage.PYTHON
+    
+
+    @classmethod
+    def parse_dependencies(cls, project_root: str) -> dict[str, str | None]:
+        """
+        Parse the dependencies from a pyproject.toml file.
+
+        Args:
+            pyproject_path (str): Path to the pyproject.toml file.
+
+        Returns:
+            list[str]: List of dependencies.
+        """
+
+        pyproject_path = os.path.join(project_root, "pyproject.toml")
+
+        if not os.path.exists(pyproject_path):
+            return {}
+
+        with open(pyproject_path, "rb") as f:
+            pyproject = tomllib.load(f)
+            return cls._parse_dependencies(pyproject)
+
+
+    @classmethod
+    def _parse_dependencies(cls, pyproject_content: dict[str, Any]) -> dict[str, str | None]:
         """Parse dependencies from the pyproject.toml file and retrieve version via importlib.
 
         Args:
@@ -173,12 +169,4 @@ class DependencyParser:
             except importlib.metadata.PackageNotFoundError:
                 versioned_dependencies[dependency] = None
         return versioned_dependencies
-
-
-if __name__ == "__main__":
-    from pprint import pprint
-
-    parsed_deps = parse_dependencies("../mock_pyproject.toml")
-    pprint(parsed_deps)
-
 
