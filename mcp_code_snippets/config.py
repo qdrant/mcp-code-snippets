@@ -1,9 +1,12 @@
 import json
+from typing import Optional
 
 from fastmcp.utilities.mcp_config import MCPConfig
 
+from mcp_code_snippets.settings import get_default_mcp_config
 
-def read_mcp_config(config_path: str = "mcp_proxy.json") -> MCPConfig:
+
+def read_mcp_config(config_path: Optional[str]) -> MCPConfig:
     """Read the MCP configuration from a file.
 
     Args:
@@ -12,6 +15,9 @@ def read_mcp_config(config_path: str = "mcp_proxy.json") -> MCPConfig:
     Returns:
         MCPConfig: The MCP configuration object.
     """
+
+    if config_path is None:
+        return get_default_mcp_config()
 
     with open(config_path, "r") as f:
         raw_config = json.load(f)

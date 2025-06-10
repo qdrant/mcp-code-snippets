@@ -1,11 +1,17 @@
 [project]
 name = "mcp-code-snippets"
 version = "0.1.0"
+authors = [
+    {name = "Qdrant Team", email = "info@qdrant.tech"}
+]
+license = "Apache-2.0"
 description = "Intermediate MCP server for code snippets search"
 readme = "README.md"
 requires-python = ">=3.10"
+
+
 dependencies = [
-    "mcp-server-qdrant",
+    "fastmcp>=2.7.0",
 ]
 
 [build-system]
@@ -16,11 +22,14 @@ build-backend = "hatchling.build"
 line-length = 88
 target-version = "py38"
 
-[tool.uv.sources]
-mcp-server-qdrant = { git = "https://github.com/qdrant/mcp-server-qdrant.git", branch = "filters" }
 
 [project.scripts]
 mcp-code-snippets = "mcp_code_snippets.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["mcp_code_snippets"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.13",
+]
