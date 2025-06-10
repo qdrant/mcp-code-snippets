@@ -25,8 +25,8 @@ def get_default_mcp_config() -> MCPConfig:
 class ProxySettings(BaseSettings):
     """Settings for the Qdrant FastMCP Proxy."""
 
-    project_root_path: str = Field(
-        default="./",
+    project_root_path: Optional[str] = Field(
+        default=None,
         validation_alias="PROJECT_ROOT_PATH",
         description="The root path of the project. If not provided, the current working directory will be used.",
     )
@@ -45,7 +45,7 @@ class ProxySettings(BaseSettings):
 
     @field_validator("project_root_path", mode="before")
     @classmethod
-    def validate_project_root_path(cls, v: str) -> str:
+    def validate_project_root_path(cls, v: Optional[str]) -> str:
         """Validate the project root path
 
         PROJECT_ROOT_PATH is assumed to be set manually, so it takes precedence over the other cases.
@@ -56,20 +56,29 @@ class ProxySettings(BaseSettings):
         Args:
             v (str): The project root path from the environment variable or default value.
         """
-        project_root_env = os.environ.get("PROJECT_ROOT_PATH")
-        workspace_folder_paths_env = os.environ.get("WORKSPACE_FOLDER_PATHS")
+        
+        
+        resolved_path = None
+        cursor_workdir_path = os.environ.get("WORKSPACE_FOLDER_PATHS")
 
-        if project_root_env:
-            v = project_root_env
-        elif workspace_folder_paths_env:
-            v = workspace_folder_paths_env
+        if v is not None:
+            resolved_path = v
+        elif cursor_workdir_path is not None:
+            resolved_path = cursor_workdir_path
+        else:
+            # Fallback to the current working directory
+            resolved_path = str(Path.cwd().resolve())
 
-        if v == './':
-            abs_path = Path(v).resolve()
-            if abs_path == Path("/"):
-                raise ValueError(
-                    "Project root path cannot resolve to system root '/', "
-                    "please specify a valid path via `PROJECT_ROOT_PATH` environment variable."
-                )
+        # Check that `resolved_path` is not root `/`
+        # Cause if it is, we might have a problem with configuration of MCP servers
+        if Path(resolved_path).resolve() == Path("/"):
+            raise ValueError(
+                "Project root path cannot resolve to system root '/', "
+                "please specify a valid path via `PROJECT_ROOT_PATH` environment variable."
+            )
 
-        return v
+        return resolved_path
+
+
+if __name__ == "__main__":
+    print(ProxySettings().model_dump_json(indent=2))
