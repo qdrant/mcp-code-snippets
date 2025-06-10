@@ -38,7 +38,7 @@ def detect_python_language(project_root: str) -> Optional[ProgrammingLanguage]:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.PYTHON
         if indicator.endswith("*.py"):
-            if glob.glob(os.path.join(project_root, "**/*.py"), recursive=True):
+            if glob.glob(os.path.join(project_root, "**/*.py")):
                 return ProgrammingLanguage.PYTHON
     return None
 
@@ -59,7 +59,7 @@ def detect_java_language(project_root: str) -> Optional[ProgrammingLanguage]:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.JAVA
         if indicator.startswith("*."):
-            if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
+            if glob.glob(os.path.join(project_root, f"**/{indicator}")):
                 return ProgrammingLanguage.JAVA
     return None
 
@@ -82,7 +82,7 @@ def detect_javascript_language(project_root: str) -> Optional[ProgrammingLanguag
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.JAVASCRIPT
         if indicator.startswith("*."):
-            if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
+            if glob.glob(os.path.join(project_root, f"**/{indicator}")):
                 return ProgrammingLanguage.JAVASCRIPT
     return None
 
@@ -97,7 +97,7 @@ def detect_rust_language(project_root: str) -> Optional[ProgrammingLanguage]:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.RUST
         if indicator.startswith("*."):
-            if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
+            if glob.glob(os.path.join(project_root, f"**/{indicator}")):
                 return ProgrammingLanguage.RUST
     return None
 
@@ -112,7 +112,7 @@ def detect_golang_language(project_root: str) -> Optional[ProgrammingLanguage]:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.GOLANG
         if indicator.startswith("*."):
-            if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
+            if glob.glob(os.path.join(project_root, f"**/{indicator}")):
                 return ProgrammingLanguage.GOLANG
     return None
 
@@ -127,7 +127,7 @@ def detect_csharp_language(project_root: str) -> Optional[ProgrammingLanguage]:
         if os.path.exists(os.path.join(project_root, indicator)):
             return ProgrammingLanguage.CSHARP
         if indicator.startswith("*."):
-            if glob.glob(os.path.join(project_root, f"**/{indicator}"), recursive=True):
+            if glob.glob(os.path.join(project_root, f"**/{indicator}")):
                 return ProgrammingLanguage.CSHARP
     return None
 
