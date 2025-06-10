@@ -1,10 +1,11 @@
 from typing import Annotated
+from pydantic import Field
 from mcp.types import (
     EmbeddedResource,
     ImageContent,
     TextContent,
 )
-from pydantic import Field
+
 from mcp_code_snippets.config import read_mcp_config
 from mcp_code_snippets.explore.detect_language import detect_language
 from mcp_code_snippets.explore.extract_deps import get_dependencies
@@ -52,7 +53,6 @@ async def lookup_snippet(
         "language": language.value,
         "package_name": list(packages.keys()),
     }
-
     # Call the remote MCP tool
     async with mcp.client:
         result = await mcp.client.call_tool(
@@ -63,4 +63,8 @@ async def lookup_snippet(
 
 
 if __name__ == "__main__":
+    from mcp_code_snippets.utils import watch_parent
+
+    watch_parent()  # server might not die without explicit kill when the parent process dies (e.g. on closing Cursor)
+
     mcp.run(transport="stdio")
