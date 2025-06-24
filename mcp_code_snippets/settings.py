@@ -57,7 +57,6 @@ class ProxySettings(BaseSettings):
             v (str): The project root path from the environment variable or default value.
         """
 
-        resolved_path = None
         cursor_workdir_path = os.environ.get("WORKSPACE_FOLDER_PATHS")
 
         if v is not None:
