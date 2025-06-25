@@ -67,9 +67,14 @@ class PythonDependencyParser(DependencyParserBase):
         if not content: return []
 
         dependencies = []
+
         if isinstance(content, list):
             # `dependencies = ["fastmcp>=2.7.0"]`
             for dependency in content:
+                if ';' in dependency:
+                    # `"tomli>=2.0 ; python_full_version < '3.11'"`
+                    dependency = dependency.split(";")[0].strip()
+
                 if "<" in dependency:
                     dependency = dependency.split("<")[0].strip()
                 elif ">" in dependency:
