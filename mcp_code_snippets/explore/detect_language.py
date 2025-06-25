@@ -29,9 +29,15 @@ def detect_python_language(project_root: str) -> Optional[ProgrammingLanguage]:
         "pyproject.toml",
         "requirements.txt",
         "setup.py",
+        "setup.cfg",
         "Pipfile",
+        "Pipfile.lock",
         "poetry.lock",
+        "uv.lock",
         "*.py",
+        ".venv",
+        "venv",
+        ".python-version",
     ]
 
     for indicator in python_indicators:
