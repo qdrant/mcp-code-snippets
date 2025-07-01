@@ -1,10 +1,14 @@
 import importlib.metadata
 import os
-import tomllib
 from typing import Any
 
 from mcp_code_snippets.explore.detect_language import ProgrammingLanguage
 from mcp_code_snippets.explore.extract_deps.base import DependencyParserBase
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 
 
 class PythonDependencyParser(DependencyParserBase):
