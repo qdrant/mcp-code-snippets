@@ -22,14 +22,13 @@ class PythonDependencyParser(DependencyParserBase):
         Parse the dependencies from a pyproject.toml file.
 
         Args:
-            pyproject_path (str): Path to the pyproject.toml file.
+            project_root (str): Path to the pyproject.toml file.
 
         Returns:
             list[str]: List of dependencies.
         """
 
         pyproject_path = os.path.join(project_root, "pyproject.toml")
-
         if not os.path.exists(pyproject_path):
             return {}
 
@@ -53,6 +52,7 @@ class PythonDependencyParser(DependencyParserBase):
         raw_dependencies = []
         raw_dependencies.extend(cls._parse_poetry_dependencies(pyproject_content))
         raw_dependencies.extend(cls._parse_pypa_spec_dependencies(pyproject_content))
+        raw_dependencies.extend(cls._parse_uv_dependencies(pyproject_content))
 
         clean_dependencies = cls._clean_dependencies(raw_dependencies)
         dependencies = cls._assign_versions(clean_dependencies)
@@ -64,11 +64,21 @@ class PythonDependencyParser(DependencyParserBase):
             regions = region.split(".")
             for region in regions:
                 content = content.get(region, {})
+                if not content: break
         else:
             content = content.get(region, {})
+
+        if not content: return []
+
         dependencies = []
+
         if isinstance(content, list):
+            # `dependencies = ["fastmcp>=2.7.0"]`
             for dependency in content:
+                if ';' in dependency:
+                    # `"tomli>=2.0 ; python_full_version < '3.11'"`
+                    dependency = dependency.split(";")[0].strip()
+
                 if "<" in dependency:
                     dependency = dependency.split("<")[0].strip()
                 elif ">" in dependency:
@@ -79,7 +89,23 @@ class PythonDependencyParser(DependencyParserBase):
                     dependency = dependency.split("^")[1].strip()
                 dependencies.append(dependency)
         elif isinstance(content, dict):
-            dependencies = list(content.keys())
+            for key, value in content.items():
+                if isinstance(value, str) or isinstance(value, dict):
+                    # `[tool.poetry.dependencies]`
+                    # `httpx = { version = ">=0.20.0", extras = ["http2"] }`
+                    dependencies.append(key)
+                elif isinstance(value, list):
+                    for item in value:
+                        if isinstance(item, str):
+                            #  `[project.optional-dependencies]`
+                            #  `dev = ["pytest", "ruff", "black"]`
+                            dependencies.append(item)
+                        else:
+                            # `[tool.poetry.group.dev.dependencies]`
+                            # `numpy = [{'version': '>=2.1.0', 'python': '>=3.13'}, ...]`
+                            dependencies.append(key)
+                            break
+
         return dependencies
 
     @classmethod
@@ -100,6 +126,27 @@ class PythonDependencyParser(DependencyParserBase):
         ):
             fields.append(f"tool.poetry.group.{group}.dependencies")
             fields.append(f"tool.poetry.group.{group}.dev-dependencies")
+
+        dependencies = []
+        for field in fields:
+            dependencies.extend(cls._parse_region(pyproject_content, field))
+
+        return dependencies
+
+    @classmethod
+    def _parse_uv_dependencies(cls, pyproject_content: dict[str, Any]) -> list[str]:
+        """
+        Parse uv dependencies from the pyproject.toml file.
+        PEP compliant dependencies are parsed by the `_parse_pypa_spec_dependencies` method,
+        tool.uv and similar are extracted in this method.
+
+        Args:
+            pyproject_content (dict): Parsed pyproject.toml content.
+
+        Returns:
+            list[str]: List of uv dependencies.
+        """
+        fields = ["tool.uv.dependencies", "tool.uv.dev-dependencies"]
 
         dependencies = []
         for field in fields:
@@ -178,3 +225,14 @@ class PythonDependencyParser(DependencyParserBase):
             except importlib.metadata.PackageNotFoundError:
                 versioned_dependencies[dependency] = None
         return versioned_dependencies
+
+
+if __name__ == '__main__':
+    # Example usage
+    from pathlib import Path
+
+    parser = PythonDependencyParser()
+    project_root = Path(__file__).parent.parent.parent.parent
+
+    from pprint import pprint
+    pprint(parser.parse_dependencies(str(project_root)))
