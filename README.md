@@ -1,7 +1,7 @@
 # MCP Code Snippets
 
 This is an local adapter for MCP server that allows Agents to lookup code snippets in your project.
-Local MCP implementation allows to auto-fill some arguments for the remote MCP server, and therefore make lookup more accurate.
+Local MCP implementation allows to auto-fill some arguments for the remote MCP server, and therefore make lookup more accurate. If no results are found with these arguments, results without arguments are returned.
 By default, it uses Qdrant-maintaned remote MCP server with a collection of code snippets, but you can use your own collection by providing a custom MCP proxy configuration.
 
 ## Setup

@@ -59,6 +59,14 @@ async def lookup_snippet(
             "qdrant-find",
             arguments=arguments,
         )
+
+        # If empty, try again without filters
+        if len(result) == 0:
+            result = await mcp.client.call_tool(
+                "qdrant-find",
+                arguments={"query": query},
+            )
+
         return result
 
 
